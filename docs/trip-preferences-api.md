@@ -11,7 +11,7 @@ Receives and validates a traveller's trip preferences.
   "destination": "Sydney",
   "start_date": "2026-11-10",
   "end_date": "2026-11-14",
-  "total_budget_aud": 1200,
+  "budget_aud": 1200,
   "travellers": 2,
   "interests": ["beaches", "food"]
 }
@@ -21,15 +21,12 @@ Status:`200 OK`
 
 ```json
 {
-  "message": "Trip preferences received successfully",
-  "preferences": {
     "destination": "Sydney",
     "start_date": "2026-11-10",
     "end_date": "2026-11-14",
-    "total_budget_aud": 1200,
+    "budget_aud": 1200,
     "travellers": 2,
-    "interests": ["beaches", "food"]
-  }
+    "interests": ["beaches","food"]
 }
 ```
 ## Validation rules

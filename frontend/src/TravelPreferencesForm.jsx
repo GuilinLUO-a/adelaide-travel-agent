@@ -105,8 +105,7 @@ export default function TravelPreferencesForm() {
         <section>
             <h2>Your travel preferences</h2>
 
-            {/* event.preventDefault() stops the browser 
-    from refreshing the page when the form is submitted.*/}
+            {/* Prevent the browser's default form submission. */}
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={isSubmitting}>
                     <legend>Trip details</legend>
