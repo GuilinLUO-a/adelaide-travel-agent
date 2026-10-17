@@ -1,8 +1,21 @@
 ## Current functionality
 
 - React frontend checks the Python backend connection.
-- Failed requests display a useful error.
-- The connection can be checked again after restarting the backend.
+- Users can enter destination, dates, total budget in AUD,
+  number of travellers, and optional interests.
+- React submits preferences to POST /api/trip-preferences.
+- FastAPI validates preferences and returns the accepted values.
+- The page displays a confirmation summary from the backend response.
+- Validation errors and connection failures display useful messages.
+- Form controls are disabled while submitting.
+- Users can retry after a failed request.
+
+Preferences are validated and displayed but are not saved.
+AI itinerary generation will be added in a later module.
+
+## API contract
+
+See [Travel Preferences API](docs/trip-preferences-api.md).
 
 ## Local setup — Windows Command Prompt
 

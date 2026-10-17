@@ -1,5 +1,6 @@
 // export default App
 import { useState } from 'react'
+import TravelPreferencesForm from './TravelPreferencesForm'
 
 function App() {
   const [message, setMessage] = useState('Connection not checked.')
@@ -49,6 +50,8 @@ function App() {
       </button>
 
       <p role="status">{message}</p>
+
+      <TravelPreferencesForm />
     </main>
   )
 }
