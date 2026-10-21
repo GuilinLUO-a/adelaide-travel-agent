@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import ItineraryDisplay from './ItineraryDisplay'
 
 export default function TravelPreferencesForm() {
     const [form, setForm] = useState({
@@ -14,6 +15,14 @@ export default function TravelPreferencesForm() {
     const [errorMessage, setErrorMessage] = useState('')
     const [acceptedPreferences, setAcceptedPreferences] = useState(null)
 
+
+    const [isGenerating, setIsGenerating] = useState(false)
+    const [generationError, setGenerationError] = useState('')
+    const [itinerary, setItinerary] = useState(null)
+
+    const generationLock = useRef(false)
+
+
     function handleChange(event) {
         const { name, value } = event.target
 
@@ -23,6 +32,9 @@ export default function TravelPreferencesForm() {
         }))
         setErrorMessage('')
         setAcceptedPreferences(null)
+
+        setGenerationError('')
+        setItinerary(null)
     }
 
     async function handleSubmit(event) {
@@ -30,9 +42,13 @@ export default function TravelPreferencesForm() {
 
         if (isSubmitting) return
 
+
+        setGenerationError('')
+        setItinerary(null)
         setIsSubmitting(true)
         setErrorMessage('')
         setAcceptedPreferences(null)
+
 
         const payload = {
             destination: form.destination,
@@ -101,13 +117,99 @@ export default function TravelPreferencesForm() {
         }
     }
 
+
+
+    async function handleGenerate() {
+        // Prevent requests without accepted preferences
+        // and prevent duplicate generation requests.
+        if (!acceptedPreferences || generationLock.current) {
+            return
+        }
+
+        generationLock.current = true
+        setIsGenerating(true)
+        setGenerationError('')
+        setItinerary(null)
+
+        const controller = new AbortController()
+        const timeout = setTimeout(
+            () => controller.abort(),
+            15000
+        )
+
+        try {
+            const response = await fetch('/api/itinerary/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(acceptedPreferences),
+                signal: controller.signal,
+            })
+
+            // HTTP errors must be handled explicitly.
+            if (!response.ok) {
+                if (response.status === 422) {
+                    throw new Error(
+                        'Invalid travel preferences. Please review and submit them again.'
+                    )
+                }
+
+                if (response.status >= 500) {
+                    throw new Error(
+                        'The server could not generate your itinerary. Please try again.'
+                    )
+                }
+
+                throw new Error(
+                    `Unexpected server response: HTTP ${response.status}`
+                )
+            }
+
+            const data = await response.json()
+
+            // Check the minimum response structure.
+            if (!Array.isArray(data.days)) {
+                throw new Error(
+                    'The backend returned an invalid itinerary.'
+                )
+            }
+
+            setItinerary(data)
+
+        } catch (error) {
+            console.error('Itinerary generation failed:', error)
+
+            if (error.name === 'AbortError') {
+                setGenerationError(
+                    'Generation took too long. Please try again.'
+                )
+            } else if (error instanceof TypeError) {
+                setGenerationError(
+                    'Could not connect to the backend. Check that it is running.'
+                )
+            } else {
+                setGenerationError(
+                    error.message || 'An unexpected error occurred.'
+                )
+            }
+
+        } finally {
+            clearTimeout(timeout)
+            generationLock.current = false
+            setIsGenerating(false)
+        }
+    }
+
+
+
     return (
         <section>
             <h2>Your travel preferences</h2>
 
             {/* Prevent the browser's default form submission. */}
             <form onSubmit={handleSubmit}>
-                <fieldset disabled={isSubmitting}>
+                <fieldset disabled={isSubmitting || isGenerating}>
                     <legend>Trip details</legend>
                     <p>
                         <label>
@@ -232,6 +334,41 @@ export default function TravelPreferencesForm() {
                     </dl>
                 </section>
             )}
+
+
+
+            {acceptedPreferences && (
+                <div>
+                    <button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={isGenerating || isSubmitting}
+                        aria-busy={isGenerating}
+                    >
+                        {isGenerating
+                            ? 'Generating your itinerary...'
+                            : generationError
+                                ? 'Try again'
+                                : 'Generate itinerary'}
+                    </button>
+
+                    {isGenerating && (
+                        <p role="status">
+                            Creating your day-by-day travel plan...
+                        </p>
+                    )}
+                </div>
+            )}
+
+
+            {generationError && (
+                <p role="alert">{generationError}</p>
+            )}
+
+            {itinerary && (
+                <ItineraryDisplay itinerary={itinerary} />
+            )}
+
         </section>
     )
 }
