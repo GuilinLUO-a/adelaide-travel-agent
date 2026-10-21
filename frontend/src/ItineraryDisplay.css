@@ -1,0 +1,50 @@
+
+.itinerary {
+    margin-top: 24px;
+    text-align: left;
+}
+
+.itinerary-summary {
+    margin-bottom: 20px;
+}
+
+.itinerary-days {
+    display: grid;
+    gap: 16px;
+}
+
+.itinerary-day {
+    border: 1px solid var(--border, #cccccc);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.itinerary-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.itinerary-day-header h4,
+.itinerary-day-header p {
+    margin: 0;
+}
+
+.itinerary-activities {
+    margin-top: 16px;
+    margin-bottom: 0;
+    padding-left: 24px;
+}
+
+.itinerary-activities li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.itinerary-note {
+    margin-top: 16px;
+    font-size: 14px;
+    opacity: 0.75;
+}

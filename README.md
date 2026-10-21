@@ -1,21 +1,40 @@
+
 ## Current functionality
 
-- React frontend checks the Python backend connection.
-- Users can enter destination, dates, total budget in AUD,
+### Module 1 — Backend connection
+- React checks connectivity with the FastAPI backend.
+- The user sees connection success and failure messages.
+
+### Module 2 — Travel preferences
+- Users enter destination, dates, total budget in AUD,
   number of travellers, and optional interests.
-- React submits preferences to POST /api/trip-preferences.
-- FastAPI validates preferences and returns the accepted values.
-- The page displays a confirmation summary from the backend response.
-- Validation errors and connection failures display useful messages.
-- Form controls are disabled while submitting.
-- Users can retry after a failed request.
+- FastAPI validates travel preferences.
+- React displays accepted preferences.
+- Invalid inputs and connection errors are handled.
 
-Preferences are validated and displayed but are not saved.
-AI itinerary generation will be added in a later module.
+### Module 3 — Itinerary generation
+- Users generate itineraries from accepted preferences.
+- FastAPI generates day-by-day activity suggestions.
+- Interests influence the suggested activities.
+- The total budget is allocated across travel days.
+- React displays each day and its activities.
+- Loading, error handling, and retry are supported.
+- Automated backend tests cover generation and API validation.
 
-## API contract
+Itinerary generation currently uses deterministic Python logic,
+not a large language model (LLM).
 
-See [Travel Preferences API](docs/trip-preferences-api.md).
+Activity suggestions are illustrative.
+Budget allocations are not verified travel prices.
+
+Trips are not saved to a database.
+
+
+
+## API contracts
+
+- [Travel Preferences API](docs/trip-preferences-api.md)
+- [Itinerary Generation API](docs/itinerary-api.md)
 
 ## Local setup — Windows Command Prompt
 
@@ -58,3 +77,38 @@ npm run dev
 
 Open the Local URL printed by Vite.
 Keep both terminals running. Press Ctrl+C in each terminal to stop it.
+
+
+## Testing
+
+### Backend
+
+From the repository root:
+
+```bat
+cd backend
+.venv\Scripts\activate
+python -m pip install -r requirements-dev.txt
+python -m pytest -v
+```
+
+### Frontend
+
+From the repository root:
+
+```bat
+cd frontend
+npm install
+npm run lint
+npm run build
+```
+
+### Manual verification
+
+1. Start the backend and frontend.
+2. Check backend connectivity.
+3. Submit valid travel preferences.
+4. Generate and display an itinerary.
+5. Test a single-day trip and empty interests.
+6. Test backend failure and retry.
+7. Confirm that changing preferences clears the old itinerary.
