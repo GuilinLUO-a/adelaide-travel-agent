@@ -238,3 +238,20 @@ The timestamp is an example, not a value to hardcode.
 - Automated tests must not require live provider requests.
 - Test successful enrichment, empty results, malformed responses,
   provider failures, and preservation of the original itinerary.
+
+## Place enrichment implementation
+
+- PLACE_PROVIDER selects mock or google_places.
+- The default provider is mock.
+- Each category is looked up once while constructing an itinerary response.
+- Lookup results are not shared between requests or persisted.
+- The same place is not selected twice within one day.
+- Places may repeat across different days.
+- If no unused candidate remains, retain the activity with
+  place_status not_found and place null.
+- Runtime provider failures retain the itinerary with HTTP 200,
+  provider_error statuses, and warnings.
+- Invalid provider configuration returns HTTP 503.
+- Place selection does not verify visit-time opening hours or
+  overall schedule feasibility.
+- Routes remain empty until the route integration is implemented.
