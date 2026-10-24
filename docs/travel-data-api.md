@@ -255,3 +255,51 @@ The timestamp is an example, not a value to hardcode.
 - Place selection does not verify visit-time opening hours or
   overall schedule feasibility.
 - Routes remain empty until the route integration is implemented.
+
+## Route warnings
+
+Each route includes a warnings list, defaulting to an empty list.
+
+Google walking routes include the walking-route notice and any
+route-specific warnings returned by the provider.
+
+## Integrated endpoint behaviour
+
+`POST /api/itinerary/generate` accepts the existing travel-preference
+request and returns activities enriched with places and walking routes.
+
+Each day can contain these journeys:
+
+- Morning to afternoon.
+- Afternoon to evening.
+
+### Missing information
+
+| Condition | Response behaviour |
+| --- | --- |
+| A place is available | The activity contains its place data |
+| No place is found | `place_status` is `not_found`; `place` is null |
+| Place lookup fails | `place_status` is `provider_error`; `place` is null |
+| Place lookup is not performed | `place_status` is `not_requested`; `place` is null |
+| A journey endpoint has no place | The journey is skipped and an itinerary warning is added |
+| No walking route is found | Route status is `not_found` |
+| Route lookup fails | Route status is `provider_error` |
+
+Unavailable routes have null distance, duration, geometry, and source.
+An available route may have null geometry while retaining its measurements.
+
+Provider lookup failures preserve usable itinerary information and can
+return HTTP 200 with warnings. Invalid provider configuration returns
+HTTP 503. Request-validation failures return HTTP 422.
+
+### Sources and estimates
+
+Available data includes its provider, retrieval timestamp, and any
+returned attributions.
+
+Available walking routes are estimates. Each route has a `warnings`
+array for route-specific notices. The top-level `warnings` array
+contains itinerary-wide notices.
+
+The Google walking-route notice is displayed beside route information
+and drawn routes.

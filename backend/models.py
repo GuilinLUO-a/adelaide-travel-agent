@@ -81,6 +81,7 @@ class Route(AppModel):
     is_estimate: Literal[True] = True
     encoded_polyline: str | None = Field(default=None, min_length=1)
     source: DataSource | None = None
+    warnings: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def check_route(self) -> "Route":
