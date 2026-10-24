@@ -1,5 +1,9 @@
 
 import './ItineraryDisplay.css'
+import ActivityPlace from './ActivityPlace'
+import WarningList from './WarningList'
+import RouteSummary from './RouteSummary'
+import ItineraryMap from './ItineraryMap'
 
 const PERIOD_LABELS = {
     morning: 'Morning',
@@ -30,6 +34,10 @@ export default function ItineraryDisplay({ itinerary }) {
                 Total budget: {formatMoney(itinerary.total_budget_aud)}
             </p>
 
+            <WarningList warnings={itinerary.warnings} />
+            {itinerary.destination.trim().toLowerCase() === 'adelaide' && (
+                <ItineraryMap itinerary={itinerary} />
+            )}
             <div className="itinerary-days">
                 {itinerary.days.map((day) => (
                     <article className="itinerary-day" key={day.date}>
@@ -48,13 +56,29 @@ export default function ItineraryDisplay({ itinerary }) {
                             {day.activities.map((activity, index) => (
                                 <li key={`${activity.period}-${index}`}>
                                     <strong>
-                                        {PERIOD_LABELS[activity.period]
-                                            ?? activity.period}:
+                                        {PERIOD_LABELS[activity.period] ?? activity.period}:
                                     </strong>
-                                    {' '}{activity.title}
+
+                                    <ActivityPlace activity={activity} />
                                 </li>
                             ))}
                         </ul>
+                        <div className="itinerary-routes">
+                            <h5>Walking routes</h5>
+
+                            {day.routes?.length > 0 ? (
+                                day.routes.map((route) => (
+                                    <RouteSummary
+                                        key={`${route.from_period}-${route.to_period}`}
+                                        route={route}
+                                    />
+                                ))
+                            ) : (
+                                <p>
+                                    Walking route information is unavailable for this day.
+                                </p>
+                            )}
+                        </div>
                     </article>
                 ))}
             </div>

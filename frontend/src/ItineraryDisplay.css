@@ -48,3 +48,61 @@
     font-size: 14px;
     opacity: 0.75;
 }
+
+.activity-place {
+    margin-top: 0.4rem;
+    padding: 0.75rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background: #fff;
+    color: #1f1f1f;
+}
+
+.activity-place p {
+    margin: 0.35rem 0;
+}
+
+.activity-place a {
+    color: #1456b8;
+}
+
+.google-maps-attribution {
+    font-family: Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: normal;
+    white-space: nowrap;
+    color: #5e5e5e;
+}
+
+.retrieved-at {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.itinerary-warnings {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid #a66b00;
+    background: #fff8e1;
+    color: #1f1f1f;
+}
+
+.itinerary-warnings h4 {
+    margin: 0 0 0.5rem;
+}
+
+.itinerary-warnings ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.itinerary-routes {
+    margin-top: 1rem;
+}
+
+.route-summary {
+    margin-top: 0.75rem;
+    border-left: 4px solid #466b8f;
+}

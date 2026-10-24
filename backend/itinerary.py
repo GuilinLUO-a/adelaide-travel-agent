@@ -51,31 +51,41 @@ DEFAULT_IDEAS = [
 ]
 
 
-def generate_activities(
+def get_activity_categories(
     interests: list[str], day_number: int
-) -> list[dict[str, str]]:
-
+) -> list[str]:
     if day_number < 1:
         raise ValueError("Day number must be positive.")
 
-    # Match interests to the categories we currently support.
     matching_interests = [
         interest.strip().lower()
         for interest in interests
         if interest.strip().lower() in ACTIVITY_IDEAS
     ]
 
+    if not matching_interests:
+        return ["attractions", "attractions", "attractions"]
+
+    categories = []
+
+    for index in range(3):
+        category_index = (day_number - 1 + index) % len(matching_interests)
+        categories.append(matching_interests[category_index])
+
+    return categories
+
+
+def generate_activities(
+    interests: list[str], day_number: int
+) -> list[dict[str, str]]:
+    categories = get_activity_categories(interests, day_number)
     periods = ["morning", "afternoon", "evening"]
     activities = []
 
     for index, period in enumerate(periods):
+        category = categories[index]
 
-        if matching_interests:
-            category_index = (
-                day_number - 1 + index
-            ) % len(matching_interests)
-
-            category = matching_interests[category_index]
+        if category in ACTIVITY_IDEAS:
             title = ACTIVITY_IDEAS[category][index]
         else:
             title = DEFAULT_IDEAS[index]
